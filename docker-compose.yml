@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: stockrecommend-db
+    restart: always
+    environment:
+      # SECURITY: All database credentials must be set via .env file
+      # Never use default values in production!
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      # SECURITY: In production, use non-standard port via POSTGRES_PORT env var
+      # Default 5432 is for local development convenience only
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - stockrecommend-network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: stockrecommend-app
+    restart: always
+    ports:
+      # SECURITY: In production, use non-standard port via APP_PORT env var
+      # Default 8000 is for local development convenience only
+      - "${APP_PORT:-8000}:8000"
+    environment:
+      # SECURITY: All sensitive values must be set via .env file
+      # DATABASE_URL should be constructed from individual components or set directly
+      DATABASE_URL: ${DATABASE_URL}
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - .:/app
+      - /app/__pycache__
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - stockrecommend-network
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  stockrecommend-network:
+    driver: bridge

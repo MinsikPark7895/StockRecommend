@@ -79,6 +79,51 @@ StockRecommend/
 └── main.py              # 메인 실행 파일
 ```
 
+## 🚀 빠른 시작 (Quick Start)
+
+### 필수 사전 요구사항
+- Docker 및 Docker Compose 설치
+- Git
+
+### 설치 및 실행
+
+1. **저장소 클론**
+   ```bash
+   git clone <repository-url>
+   cd StockRecommend
+   ```
+
+2. **환경 변수 설정**
+   ```bash
+   # env.example을 복사하여 .env 파일 생성
+   cp env.example .env
+   
+   # .env 파일을 열고 모든 값을 실제 값으로 변경
+   # 특히 POSTGRES_PASSWORD와 DATABASE_URL의 비밀번호를 변경하세요!
+   ```
+
+3. **Docker 컨테이너 실행**
+   ```bash
+   docker-compose up -d --build
+   ```
+
+4. **서비스 확인**
+   ```bash
+   # 서비스 상태 확인
+   docker-compose ps
+   
+   # 로그 확인
+   docker-compose logs -f
+   ```
+
+### 🔒 보안 주의사항
+
+**중요**: 이 프로젝트를 사용하기 전에 반드시 `.env` 파일을 생성하고 강력한 비밀번호를 설정하세요!
+
+- `.env` 파일은 절대 Git에 커밋하지 마세요 (이미 `.gitignore`에 포함됨)
+- 프로덕션 환경에서는 반드시 강력한 비밀번호를 사용하세요
+- 자세한 보안 가이드는 [SECURITY.md](SECURITY.md)를 참조하세요
+
 ## ⚠️ 주의사항
 
 - 본 시스템은 교육 및 연구 목적으로 개발되었습니다.
